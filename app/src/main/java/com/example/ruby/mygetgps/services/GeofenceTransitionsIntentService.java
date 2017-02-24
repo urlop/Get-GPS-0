@@ -31,6 +31,7 @@ import android.util.Log;
 import com.example.ruby.mygetgps.utils.GeofenceErrorMessages;
 import com.example.ruby.mygetgps.ui.activities.MainActivity;
 import com.example.ruby.mygetgps.R;
+import com.example.ruby.mygetgps.utils.ServiceHelper;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -80,7 +81,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
-        // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
 
@@ -97,6 +97,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
             // Send notification and log the transition details.
             sendNotification(geofenceTransitionDetails);
             Log.i(TAG, geofenceTransitionDetails);
+
+            if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+                ServiceHelper.startTripTrackingService(this, null);
+            }
         } else {
             // Log the error.
             Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
