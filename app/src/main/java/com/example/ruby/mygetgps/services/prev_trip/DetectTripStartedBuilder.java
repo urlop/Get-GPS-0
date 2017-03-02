@@ -65,9 +65,7 @@ public class DetectTripStartedBuilder implements
      */
     private SharedPreferences mSharedPreferences;
 
-    // Buttons for kicking off the process of adding or removing geofences.
-    private Button mAddGeofencesButton;
-    private Button mRemoveGeofencesButton;
+    private Location mLastKnowLocation;
 
     private static DetectTripStartedBuilder instance;
     private Context mContext;
@@ -109,10 +107,6 @@ public class DetectTripStartedBuilder implements
 
         // Get the value of mGeofencesAdded from SharedPreferences. Set to false as a default.
         mGeofencesAdded = mSharedPreferences.getBoolean(Constants.GEOFENCES_ADDED_KEY, false);
-        //setButtonsEnabledState();
-
-        // Get the geofences used. Geofence data is hard coded in this sample.
-        populateGeofenceList();
 
         // Kick off the request to build GoogleApiClient.
         buildGoogleApiClient();
@@ -128,6 +122,7 @@ public class DetectTripStartedBuilder implements
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        mGoogleApiClient.connect();
     }
 
     /**
@@ -138,6 +133,7 @@ public class DetectTripStartedBuilder implements
         Log.i(TAG, "Connected to GoogleApiClient");
 
         // Setup geofences
+        populateGeofenceList();
         addGeofencesButtonHandler(null);
     }
 
@@ -265,7 +261,7 @@ public class DetectTripStartedBuilder implements
      * the user's location.
      */
     public void populateGeofenceList() {
-        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
+        /*for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
 
             mGeofenceList.add(new Geofence.Builder()
                     // Set the request ID of the geofence. This is a string to identify this
@@ -290,7 +286,27 @@ public class DetectTripStartedBuilder implements
 
                     // Create the geofence.
                     .build());
+        }*/
+
+        //getting LastKnowLocation
+        //if (PermissionUtil.checkLocationPermission(mContext)) {
+        if (mLastKnowLocation == null) {
+            mLastKnowLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
+
+        mGeofenceList.add(new Geofence.Builder()
+                .setRequestId("ME")
+                .setCircularRegion(
+                        mLastKnowLocation.getLatitude(),
+                        mLastKnowLocation.getLongitude(),
+                        Constants.GEOFENCE_RADIUS_IN_METERS
+                )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build()
+        );
+        //}
     }
 
     /**

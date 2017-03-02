@@ -144,9 +144,10 @@ public class ServiceHelper {
 
     private static void restartIfAutomaticOn(Context context) {
         Timber.i("method=restartIfAutomaticOn marker=RestartingTripDetectionServiceForAutomaticDetection");
-        if (PreferencesManager.getInstance(context).getAutomatictTrackingSwitchState()) {
-            startStartTripService(context, null);
-        }
+        //TODO Check if add restart to preferences
+        //if (PreferencesManager.getInstance(context).getAutomatictTrackingSwitchState()) {
+        startStartTripService(context, null);
+        //}
     }
 
     /**
