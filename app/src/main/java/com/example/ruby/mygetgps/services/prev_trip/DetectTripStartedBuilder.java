@@ -123,11 +123,13 @@ public class DetectTripStartedBuilder implements
      * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the LocationServices API.
      */
     protected synchronized void buildGoogleApiClient() {
+        Log.i(TAG, "Try to connect GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+        mGoogleApiClient.connect();
     }
 
     /**
@@ -138,7 +140,7 @@ public class DetectTripStartedBuilder implements
         Log.i(TAG, "Connected to GoogleApiClient");
 
         // Setup geofences
-        addGeofencesButtonHandler(null);
+        addGeofencesButtonHandler();
     }
 
     @Override
@@ -179,13 +181,14 @@ public class DetectTripStartedBuilder implements
      * Adds geofences, which sets alerts to be notified when the device enters or exits one of the
      * specified geofences. Handles the success or failure results returned by addGeofences().
      */
-    public void addGeofencesButtonHandler(View view) {
+    public void addGeofencesButtonHandler() {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(mContext, mContext.getString(R.string.not_connected), Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
+            mGeofencePendingIntent = getGeofencePendingIntent();
             LocationServices.GeofencingApi.addGeofences(
                     mGoogleApiClient,
                     // The GeofenceRequest object.
@@ -193,7 +196,7 @@ public class DetectTripStartedBuilder implements
                     // A pending intent that that is reused when calling removeGeofences(). This
                     // pending intent is used to generate an intent when a matched geofence
                     // transition is observed.
-                    getGeofencePendingIntent()
+                    mGeofencePendingIntent
             ).setResultCallback(this); // Result processed in onResult().
         } catch (SecurityException securityException) {
             // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
@@ -219,7 +222,6 @@ public class DetectTripStartedBuilder implements
     public void onResult(Status status) {
         if (status.isSuccess()) {
             // Update state and save in shared preferences.
-            mGeofencesAdded = !mGeofencesAdded;
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putBoolean(Constants.GEOFENCES_ADDED_KEY, mGeofencesAdded);
             editor.apply();
@@ -228,12 +230,7 @@ public class DetectTripStartedBuilder implements
             // geofences enables the Add Geofences button.
             //setButtonsEnabledState();
 
-            Toast.makeText(
-                    mContext,
-                    mContext.getString(mGeofencesAdded ? R.string.geofences_added :
-                            R.string.geofences_removed),
-                    Toast.LENGTH_SHORT
-            ).show();
+            Toast.makeText(mContext, "Geofence Added", Toast.LENGTH_SHORT).show();
         } else {
             // Get the status code for the error and log it using a user-friendly message.
             String errorMessage = GeofenceErrorMessages.getErrorString(mContext,
