@@ -206,9 +206,9 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         stopLocationUpdates();
         Timber.d("method=TripTrackingService.saveAndStop marker=StoppingTrip action='stopping trip and saving data'");
         //TripTabFragment.getInstance().setProgressBarVisibility(true);
-        uploadValidLocationsService(tripTrackingListener.getTripSave());
         //FOR TESTING
         saveForTesting(tripTrackingListener.getDriveState(), tripTrackingListener.getTripSave());
+        uploadValidLocationsService(tripTrackingListener.getTripSave());
         if (tripTrackingListener.getTripSave().getStopMethod() == null) {
             tripTrackingListener.setStopMethod(Constants.APP_WILL_TERMINATE);
         }

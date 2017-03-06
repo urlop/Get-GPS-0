@@ -120,7 +120,7 @@ public class ServiceHelper {
         } else {
             Timber.w(message + "lastLocation=null");
         }
-        new DetectTripStartedBuilder(context, location); //new StartTripBuilder(context, location);
+        new DetectTripStartedBuilder(context, location);
     }
 
     /**
@@ -131,9 +131,6 @@ public class ServiceHelper {
         if (DetectTripStartedBuilder.getInstance() != null) {
             DetectTripStartedBuilder.getInstance().stopService();
         }
-        /*if (StartTripBuilder.getInstance() != null) {
-            StartTripBuilder.getInstance().stopService();
-        }*/
     }
 
     /**
@@ -144,9 +141,10 @@ public class ServiceHelper {
 
     private static void restartIfAutomaticOn(Context context) {
         Timber.i("method=restartIfAutomaticOn marker=RestartingTripDetectionServiceForAutomaticDetection");
-        if (PreferencesManager.getInstance(context).getAutomatictTrackingSwitchState()) {
-            startStartTripService(context, null);
-        }
+        //TODO Check if add restart to preferences
+        //if (PreferencesManager.getInstance(context).getAutomatictTrackingSwitchState()) {
+        startStartTripService(context, null);
+        //}
     }
 
     /**

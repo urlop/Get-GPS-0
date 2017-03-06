@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.ruby.mygetgps.R;
@@ -20,14 +18,11 @@ import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import timber.log.Timber;
 
@@ -65,9 +60,7 @@ public class DetectTripStartedBuilder implements
      */
     private SharedPreferences mSharedPreferences;
 
-    // Buttons for kicking off the process of adding or removing geofences.
-    private Button mAddGeofencesButton;
-    private Button mRemoveGeofencesButton;
+    private Location mLastKnowLocation;
 
     private static DetectTripStartedBuilder instance;
     private Context mContext;
@@ -87,15 +80,6 @@ public class DetectTripStartedBuilder implements
     public DetectTripStartedBuilder(Context context, Location mLastKnowLocation) {
         instance = this;
         mContext = context;
-        /*mPendingIntent = null;
-        this.mLastKnowLocation = mLastKnowLocation;
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API).addApi(ActivityRecognition.API).addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).build();
-        mGoogleApiClient.connect();
-
-        geofencingApi = LocationServices.GeofencingApi;
-        activityRecognitionApi = ActivityRecognition.ActivityRecognitionApi;*/
 
         // Empty list for storing geofences.
         mGeofenceList = new ArrayList<>();
@@ -109,14 +93,9 @@ public class DetectTripStartedBuilder implements
 
         // Get the value of mGeofencesAdded from SharedPreferences. Set to false as a default.
         mGeofencesAdded = mSharedPreferences.getBoolean(Constants.GEOFENCES_ADDED_KEY, false);
-        //setButtonsEnabledState();
-
-        // Get the geofences used. Geofence data is hard coded in this sample.
-        populateGeofenceList();
 
         // Kick off the request to build GoogleApiClient.
         buildGoogleApiClient();
-
     }
 
     /**
@@ -140,6 +119,7 @@ public class DetectTripStartedBuilder implements
         Log.i(TAG, "Connected to GoogleApiClient");
 
         // Setup geofences
+        populateGeofenceList();
         addGeofencesButtonHandler();
     }
 
@@ -212,7 +192,7 @@ public class DetectTripStartedBuilder implements
     /**
      * Runs when the result of calling addGeofences() and removeGeofences() becomes available.
      * Either method can complete successfully or with an error.
-     *
+     * <p>
      * Since this activity implements the {@link ResultCallback} interface, we are required to
      * define this method.
      *
@@ -225,10 +205,6 @@ public class DetectTripStartedBuilder implements
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putBoolean(Constants.GEOFENCES_ADDED_KEY, mGeofencesAdded);
             editor.apply();
-
-            // Update the UI. Adding geofences enables the Remove Geofences button, and removing
-            // geofences enables the Add Geofences button.
-            //setButtonsEnabledState();
 
             Toast.makeText(mContext, "Geofence Added", Toast.LENGTH_SHORT).show();
         } else {
@@ -252,8 +228,7 @@ public class DetectTripStartedBuilder implements
             return mGeofencePendingIntent;
         }
         Intent intent = new Intent(mContext, GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
-        // addGeofences() and removeGeofences().
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back
         return PendingIntent.getService(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -262,32 +237,25 @@ public class DetectTripStartedBuilder implements
      * the user's location.
      */
     public void populateGeofenceList() {
-        for (Map.Entry<String, LatLng> entry : Constants.BAY_AREA_LANDMARKS.entrySet()) {
-
-            mGeofenceList.add(new Geofence.Builder()
-                    // Set the request ID of the geofence. This is a string to identify this
-                    // geofence.
-                    .setRequestId(entry.getKey())
-
-                    // Set the circular region of this geofence.
-                    .setCircularRegion(
-                            entry.getValue().latitude,
-                            entry.getValue().longitude,
-                            Constants.GEOFENCE_RADIUS_IN_METERS
-                    )
-
-                    // Set the expiration duration of the geofence. This geofence gets automatically
-                    // removed after this period of time.
-                    .setExpirationDuration(Geofence.NEVER_EXPIRE)//Constants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
-
-                    // Set the transition types of interest. Alerts are only generated for these
-                    // transition. We track entry and exit transitions in this sample.
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                            Geofence.GEOFENCE_TRANSITION_EXIT)
-
-                    // Create the geofence.
-                    .build());
+        //getting LastKnowLocation
+        //if (PermissionUtil.checkLocationPermission(mContext)) {
+        if (mLastKnowLocation == null) {
+            mLastKnowLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
+
+        mGeofenceList.add(new Geofence.Builder()
+                .setRequestId("ME")
+                .setCircularRegion(
+                        mLastKnowLocation.getLatitude(),
+                        mLastKnowLocation.getLongitude(),
+                        Constants.GEOFENCE_RADIUS_IN_METERS
+                )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                        Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build()
+        );
+        //}
     }
 
     /**

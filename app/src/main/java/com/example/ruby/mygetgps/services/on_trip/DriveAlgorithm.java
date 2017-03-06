@@ -39,7 +39,7 @@ class DriveAlgorithm {
         boolean vAccuracy = validAccuracy(currentLocation.getLocation());
         boolean vSpeed = validSpeed(currentLocation.getLocation());
         boolean vDeltaDistance = validDeltaDistance(currentLocation.getLocation(), previousLocation);
-        boolean vLocation = vAccuracy && vSpeed && vDeltaDistance;
+        boolean vLocation = vAccuracy && vDeltaDistance; //&& vSpeed
 
         Timber.d("method=DriveAlgorithm.validLocation location.valid=%b accuracy.valid=%b speed.valid=%b deltaDistance.valid=%b action='saving trip location'",
                 vLocation, vAccuracy, vSpeed, vDeltaDistance);
