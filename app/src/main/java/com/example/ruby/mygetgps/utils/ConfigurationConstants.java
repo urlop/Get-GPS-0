@@ -34,7 +34,7 @@ public final class ConfigurationConstants {
     public final static int DRIVE_STOP_WALKING_CONFIDENCE = 80;
     public final static int LAST_N_LOCATIONS = 40;
     public final static int LIMIT_ACCURACY = 80;
-    public final static float MINIMUM_SPEED = 1.5f;
+    public final static float MINIMUM_SPEED = 0.0f;
     public final static int MINIMUM_DISTANCE_DELTA = 0;
     public final static int LIMIT_DISTANCE_BETWEEN_N_LOCATIONS = 10;
 

@@ -2,7 +2,9 @@ package com.example.ruby.mygetgps.services.on_trip;
 
 
 import android.location.Location;
+import android.widget.Toast;
 
+import com.example.ruby.mygetgps.GetGpsApplication;
 import com.example.ruby.mygetgps.models.DriveState;
 import com.example.ruby.mygetgps.models.LocationSave;
 import com.example.ruby.mygetgps.models.TripSave;
@@ -39,7 +41,7 @@ class DriveAlgorithm {
         boolean vAccuracy = validAccuracy(currentLocation.getLocation());
         boolean vSpeed = validSpeed(currentLocation.getLocation());
         boolean vDeltaDistance = validDeltaDistance(currentLocation.getLocation(), previousLocation);
-        boolean vLocation = vAccuracy && vDeltaDistance; //&& vSpeed
+        boolean vLocation = vAccuracy && vDeltaDistance && vSpeed;
 
         Timber.d("method=DriveAlgorithm.validLocation location.valid=%b accuracy.valid=%b speed.valid=%b deltaDistance.valid=%b action='saving trip location'",
                 vLocation, vAccuracy, vSpeed, vDeltaDistance);
@@ -47,6 +49,10 @@ class DriveAlgorithm {
         if (vLocation) {
             driveState.addToTotalDistance(driveState.getPreviousLocation().distanceTo(driveState.getCurrentLocation()));
             saveTripLocation(currentLocation, trip);
+            Toast.makeText(GetGpsApplication.getInstance(), "Saved: " +
+                    "lat: " + driveState.getPreviousLocation().getLatitude() +
+                    "lon: " + driveState.getPreviousLocation().getLongitude(),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
