@@ -276,18 +276,18 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
 
         StringBuilder sbAll = TestHelper.getAllLocations(driveState);
-        StringBuilder sbSaved = TestHelper.getSavedLocations(tripSave);
+        //StringBuilder sbSaved = TestHelper.getSavedLocations(tripSave);
 
         String filenameAll = "EvAll" + (dateFormat.format(Calendar.getInstance().getTimeInMillis())) + ".txt";
-        String filenameSaved = "EvSaved" + (dateFormat.format(Calendar.getInstance().getTimeInMillis())) + ".txt";
+        //String filenameSaved = "EvSaved" + (dateFormat.format(Calendar.getInstance().getTimeInMillis())) + ".txt";
 
         String allInfo = String.valueOf(sbAll);
-        String savedInfo = String.valueOf(sbSaved);
+        //String savedInfo = String.valueOf(sbSaved);
 
         File filedir = Environment.getExternalStorageDirectory();
 
         File fileAll = new File(filedir, filenameAll);
-        File fileSaved = new File(filedir, filenameSaved);
+        //File fileSaved = new File(filedir, filenameSaved);
         try {
             FileOutputStream outputStream;
 
@@ -296,11 +296,11 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
                 outputStream.write(allInfo.getBytes());
                 outputStream.close();
             }
-            if (fileSaved.createNewFile()) {
+            /*if (fileSaved.createNewFile()) {
                 outputStream = new FileOutputStream(fileSaved);
                 outputStream.write(savedInfo.getBytes());
                 outputStream.close();
-            }
+            }*/
         } catch (Exception e) {
             Timber.e(e, "method=saveForTesting error=Unable to save trip logs");
         }

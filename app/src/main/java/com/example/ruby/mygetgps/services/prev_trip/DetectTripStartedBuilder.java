@@ -256,6 +256,11 @@ public class DetectTripStartedBuilder implements
                 .build()
         );
         //}
+
+        Toast.makeText(mContext,
+                "lat: " + mLastKnowLocation.getLatitude() + " " +
+                "long: " + mLastKnowLocation.getLongitude(),
+                Toast.LENGTH_SHORT).show();
     }
 
     /**

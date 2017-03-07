@@ -31,15 +31,15 @@ public class TestHelper {
                 .append("LONGITUDE")
                 .append("\t | \t")
                 .append("LOC_ACC")
-                .append("\t | \t")
+                /*.append("\t | \t")
                 .append("ACCELX")
                 .append("\t | \t")
                 .append("ACCELY")
                 .append("\t | \t")
                 .append("ACCELZ")
                 .append("\t | \t")
-                .append("ACCEL_ACC")
-                .append(System.lineSeparator());
+                .append("ACCEL_ACC")*/
+                .append("\n");
 
         for (UserLocation ul : driveState.getUserLocations()) {
             SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.US);
@@ -52,15 +52,15 @@ public class TestHelper {
                     .append(ul.getLocation().getLongitude())
                     .append("\t | \t")
                     .append(ul.getLocation().getAccuracy())
-                    .append("\t | \t")
+                    /*.append("\t | \t")
                     .append(ul.getAcceleration()[0])
                     .append("\t | \t")
                     .append(ul.getAcceleration()[1])
                     .append("\t | \t")
                     .append(ul.getAcceleration()[2])
                     .append("\t | \t")
-                    .append(ul.getAccelerationAccuracy())
-                    .append(System.lineSeparator());
+                    .append(ul.getAccelerationAccuracy())*/
+                    .append("\n");
         }
 
         return sb;
