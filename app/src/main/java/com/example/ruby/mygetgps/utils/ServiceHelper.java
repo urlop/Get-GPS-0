@@ -91,9 +91,12 @@ public class ServiceHelper {
      */
     public static void uploadTripService(Context context, TripSave tripSave) {
         Timber.d("method=uploadTripService marker=StartingTripUpload trip=%d", tripSave.getId());
+        //TODO Upload trip AND THEN delete
         /*Intent uploadServiceIntent = new Intent(context, UploadService.class);
         uploadServiceIntent.putExtra(Constants.TRIP_ID_EXTRA, tripSave.getId());
         context.startService(uploadServiceIntent);*/
+        tripSave.deleteLocations();
+        tripSave.delete();
     }
 
     /**

@@ -138,7 +138,7 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         startLocationUpdates();
         LocationManager manager = (LocationManager) getSystemService(getApplication().LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            sendNotificationNoGps(getString(R.string.notification_trip_started_no_gps_title), getString(R.string.notification_trip_started_no_gps_message), TURN_ON_GPS_NOTIFICATION_ID);
+            sendNotification(getString(R.string.notification_trip_started_no_gps_title), getString(R.string.notification_trip_started_no_gps_message), TURN_ON_GPS_NOTIFICATION_ID);
         }
 
     }
@@ -227,18 +227,18 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         tripSave.setMiles(tripDistance);
         tripSave.save();
 
-        sendNotificationNoGps("Trip ended", "distance: " + tripDistance, 105);
+        sendNotification("Trip ended", "distance: " + tripDistance, 105);
 
-        if (TripHelper.validateFinalTrip(tripSave)) {
+        //if (TripHelper.validateFinalTrip(tripSave)) {
             Timber.d("method=uploadValidLocationsService marker=UploadingValidTrip trip.valid=true trip.distance=%f", tripDistance);
             ServiceHelper.uploadTripService(this, tripSave);
-        } else {
+        /*} else {
             Timber.d("method=uploadValidLocationsService marker=TripTooShortForUpload trip.valid=false trip.distance=%f", tripDistance);
             tripSave.deleteLocations();
             tripSave.delete();
             //TripTabFragment.getInstance().setProgressBarVisibility(false);
             Toast.makeText(getApplicationContext(), R.string.trip_error_invalid, Toast.LENGTH_LONG).show();
-        }
+        }*/
 
     }
 
@@ -313,7 +313,7 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
      * @param notificationText  message in the notification
      * @param id                identifier of the notification
      */
-    private void sendNotificationNoGps(String notificationTitle, String notificationText, int id) {
+    private void sendNotification(String notificationTitle, String notificationText, int id) {
         PowerManager pm = (PowerManager) getApplicationContext()
                 .getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wakeLock = pm.newWakeLock(
@@ -339,5 +339,10 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         wakeLock.release();
     }
 
+    @Override
+    public boolean stopService(Intent name) {
+        sendNotification("TripTrackingService", "Stopped", 110);
+        return super.stopService(name);
+    }
 }
 
