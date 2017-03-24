@@ -70,4 +70,12 @@ public class LocationSave extends SugarRecord {
     public long getTime() {
         return time;
     }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
 }

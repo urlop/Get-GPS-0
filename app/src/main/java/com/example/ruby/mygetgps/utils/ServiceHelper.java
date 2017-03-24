@@ -10,6 +10,7 @@ import com.example.ruby.mygetgps.models.TripSave;
 import com.example.ruby.mygetgps.services.on_trip.MotionTrackerBuilder;
 import com.example.ruby.mygetgps.services.on_trip.TripTrackingService;
 import com.example.ruby.mygetgps.services.prev_trip.DetectTripStartedBuilder;
+import com.example.ruby.mygetgps.services.upload_trip.UploadService;
 
 import timber.log.Timber;
 
@@ -92,9 +93,9 @@ public class ServiceHelper {
     public static void uploadTripService(Context context, TripSave tripSave) {
         Timber.d("method=uploadTripService marker=StartingTripUpload trip=%d", tripSave.getId());
         //TODO Upload trip AND THEN delete
-        /*Intent uploadServiceIntent = new Intent(context, UploadService.class);
+        Intent uploadServiceIntent = new Intent(context, UploadService.class);
         uploadServiceIntent.putExtra(Constants.TRIP_ID_EXTRA, tripSave.getId());
-        context.startService(uploadServiceIntent);*/
+        context.startService(uploadServiceIntent);
         tripSave.deleteLocations();
         tripSave.delete();
     }

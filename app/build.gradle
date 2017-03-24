@@ -20,7 +20,7 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'BASE_API_URL', '"https://example.com"'
+            buildConfigField 'String', 'BASE_API_URL', '"https://getgpsserverrails-0.herokuapp.com"'
             buildConfigField 'boolean', 'CRASHLYTICS_DISABLED', 'true'
             buildConfigField 'boolean', 'MUST_GET_MOTION_TO_STOP', 'true'
             resValue 'string', 'GOOGLE_MAP_KEY', 'AIzaSyA5cZiSOguJt0PtXepL-H6FARHnzLWZJXA'
