@@ -2,7 +2,10 @@ package com.example.ruby.mygetgps;
 
 import android.app.Application;
 
+import com.example.ruby.mygetgps.utils.logs.LogentriesTree;
 import com.orm.SugarContext;
+
+import java.io.IOException;
 
 import timber.log.Timber;
 
@@ -29,6 +32,13 @@ public class GetGpsApplication extends Application {
     private void initializeInstance() {
         sInstance = this;
         Timber.plant(new Timber.DebugTree());
+        LogentriesTree leTree = null;
+        try {
+            leTree = new LogentriesTree(getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Timber.plant(leTree);
         SugarContext.init(this);
     }
 

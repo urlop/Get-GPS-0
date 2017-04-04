@@ -121,8 +121,7 @@ public class UploadService extends IntentService {
             trip.setEndedAt(TimeHelper.longToTimeFormat(tripSave.getLocations().get(tripSave.getLocations().size() - 1).getTime()));
             GeneralHelper.setAndroidDataToTrip(this, trip);*/
 
-            Call<TripWS> call = RequestManager.getDefault(getApplicationContext()).uploadTrip(tripWS);
-            call.enqueue(new Callback<TripWS>() {
+            RequestManager.getDefault(getApplicationContext()).uploadTrip(tripWS).enqueue(new Callback<TripWS>() {
                 @Override
                 public void onResponse(Call<TripWS> call, Response<TripWS> response) {
                     if (response.isSuccessful()) {
@@ -148,7 +147,7 @@ public class UploadService extends IntentService {
     }
 
     private void sendRecords(final TripSave tripSave){
-        List<LocationSave> locations = tripSave.getLocations();
+        final List<LocationSave> locations = tripSave.getLocations();
         for (int i=0; i<locations.size()-1; i++) {
             LocationSave locationSave = locations.get(i);
             LocationSave nextLocationSave = locations.get(i+1);
@@ -163,14 +162,17 @@ public class UploadService extends IntentService {
             dateRegistered.setTime(locationSave.getTime());
             recordWS.setTime_registered(dateRegistered);
 
+            final int finalI = i;
             Call<RecordWS> call = RequestManager.getDefault(getApplicationContext()).uploadRecord(recordWS);
             call.enqueue(new Callback<RecordWS>() {
                 @Override
                 public void onResponse(Call<RecordWS> call, Response<RecordWS> response) {
                     if (response.isSuccessful()) {
                         Timber.d("method=uploadTrip.sendRecords.onResponse action='Trip saved in WS'");
-                        tripSave.deleteLocations();
-                        tripSave.delete();
+                        if (finalI == locations.size()-2) {
+                            tripSave.deleteLocations();
+                            tripSave.delete();
+                        }
                         RecordWS record = response.body();
                     }
                 }

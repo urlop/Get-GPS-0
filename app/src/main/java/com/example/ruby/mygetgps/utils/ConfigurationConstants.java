@@ -7,7 +7,7 @@ package com.example.ruby.mygetgps.utils;
 public final class ConfigurationConstants {
 
     //Logentries
-    public static final String LOGENTRIES_TOKEN = "3508199e-0871-4c45-851b-9631515c765b";
+    public static final String LOGENTRIES_TOKEN = "f679a17c-3c6b-48ca-ae54-bb232fcba88a";
 
     //Constants for Geofence
     public static final int GEOFENCE_RADIUS = 150; //meters

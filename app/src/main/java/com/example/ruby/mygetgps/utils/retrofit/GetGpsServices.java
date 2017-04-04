@@ -14,6 +14,7 @@ import java.util.HashMap;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -27,10 +28,10 @@ public interface GetGpsServices {
 
     //:vehicle_type_id
     @POST(Urls.TRIPS)
-    Call<TripWS> uploadTrip(@Body TripWS requestBody);
+    Call<TripWS> uploadTrip(@Field("trip") TripWS requestBody);
 
     //:travel_id, :start_latitude, :start_longitude, :end_latitude, :end_longitude, :speed, :time_registered
     @POST(Urls.RECORDS)
-    Call<RecordWS> uploadRecord(@Body RecordWS requestBody);
+    Call<RecordWS> uploadRecord(@Field("record") RecordWS requestBody);
 
 }

@@ -6,6 +6,11 @@ import android.content.res.Resources;
 import com.example.ruby.mygetgps.R;
 import com.google.android.gms.location.DetectedActivity;
 
+import java.io.IOException;
+
+import okhttp3.RequestBody;
+import okio.Buffer;
+
 /**
  * Contains methods related with converting int values to strings
  */
@@ -42,5 +47,19 @@ public class LoggingHelper { //TODO: Rename
         }
     }
 
+    public static String bodyToString(final RequestBody request){
+        try {
+            final RequestBody copy = request;
+            final Buffer buffer = new Buffer();
+            if(copy != null)
+                copy.writeTo(buffer);
+            else
+                return "";
+            return buffer.readUtf8();
+        }
+        catch (final IOException e) {
+            return "did not work";
+        }
+    }
 
 }

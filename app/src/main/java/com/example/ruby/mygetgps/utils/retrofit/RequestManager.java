@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.example.ruby.mygetgps.BuildConfig;
 import com.example.ruby.mygetgps.utils.Constants;
+import com.example.ruby.mygetgps.utils.LoggingHelper;
 import com.example.ruby.mygetgps.utils.PreferencesManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -115,6 +116,11 @@ public class RequestManager {
                         .header("Content-Type", contentType)
                         .header("Accept", "application/json")
                         .method(original.method(), original.body());
+
+                //Log body info
+                String bodyString = LoggingHelper.bodyToString(original.body());
+                Timber.i("method=RequestManager.getOkHttpClient bodyString=%s", bodyString);
+
                 return chain.proceed(requestBuilder.build());
             }
         });
