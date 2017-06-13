@@ -96,8 +96,8 @@ public class ServiceHelper {
         Intent uploadServiceIntent = new Intent(context, UploadService.class);
         uploadServiceIntent.putExtra(Constants.TRIP_ID_EXTRA, tripSave.getId());
         context.startService(uploadServiceIntent);
-        tripSave.deleteLocations();
-        tripSave.delete();
+        //tripSave.deleteLocations();
+        //tripSave.delete();
     }
 
     /**
@@ -107,8 +107,8 @@ public class ServiceHelper {
      */
     public static void uploadService(Context context) {
         Timber.i("method=uploadService marker=StartingTripUploadService");
-        /*Intent uploadServiceIntent = new Intent(context, UploadService.class);
-        context.startService(uploadServiceIntent);*/
+        Intent uploadServiceIntent = new Intent(context, UploadService.class);
+        context.startService(uploadServiceIntent);
     }
 
     /**

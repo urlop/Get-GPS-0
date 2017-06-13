@@ -33,7 +33,7 @@ class TripTrackingListener implements LocationListener, SensorEventListener {
     private final float[] linearAcceleration = new float[3];
     private int linearAccelerationAccuracy = 0;
     private DriveState driveState;
-    private TripSave tripSave;
+    private static TripSave tripSave;
 
     /**
      * A new trip is created if there is not a current trip yet.
@@ -47,9 +47,12 @@ class TripTrackingListener implements LocationListener, SensorEventListener {
         driveState = new DriveState();
         tripSave = TripHelper.tripOngoing();
         if (tripSave == null) {
+            Timber.i("method=constructor trip=null");
             tripSave = new TripSave();
             tripSave.save();
+            Timber.i("method=constructor.save trip=%d", tripSave.getId());
         } else {
+            Timber.i("method=constructor trip=%d", tripSave.getId());
             retrieveSavedTripData();
         }
 
@@ -154,6 +157,7 @@ class TripTrackingListener implements LocationListener, SensorEventListener {
      * @return current trip in database
      */
     public TripSave getTripSave() {
+        Timber.d("method=getTripSave id=%d", tripSave.getId());
         return tripSave;
     }
 

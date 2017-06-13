@@ -8,6 +8,8 @@ import com.example.ruby.mygetgps.models.RecordWS;
 import com.example.ruby.mygetgps.models.Trip;
 import com.example.ruby.mygetgps.models.TripSave;
 import com.example.ruby.mygetgps.models.TripWS;
+import com.example.ruby.mygetgps.models.network.RecordBody;
+import com.example.ruby.mygetgps.models.network.TripBody;
 import com.example.ruby.mygetgps.utils.Constants;
 import com.example.ruby.mygetgps.utils.GeneralHelper;
 import com.example.ruby.mygetgps.utils.PreferencesManager;
@@ -53,9 +55,10 @@ public class UploadService extends IntentService {
             if (intent.hasExtra(Constants.TRIP_ID_EXTRA)) {
                 currentTripSave = getTripSaved(intent.getLongExtra(Constants.TRIP_ID_EXTRA, 0L));
                 if (currentTripSave != null) {
+                    Timber.i("method=onHandleIntent currentTripSave='not null'");
                     generateMissingData(currentTripSave.getLocations());
                 } else {
-                    Timber.w("Trip not found in Local DB");
+                    Timber.w("method=onHandleIntent message='Trip not found in Local DB'");
                 }
             }
             uploadAllMissingTrips();
@@ -70,7 +73,19 @@ public class UploadService extends IntentService {
      * @see TripSave
      */
     private TripSave getTripSaved(Long id) {
-        return TripSave.findById(TripSave.class, id);
+        Timber.i("method=getTripSaved id=%d", id);
+        Timber.i("method=getTripSaved tripsNumber=%d", TripSave.count(TripSave.class));
+        TripSave tripSave = TripSave.findById(TripSave.class, id);
+        if (tripSave != null) {
+            Timber.i("method=getTripSaved tripSave.id=%d", tripSave.getId());
+            return tripSave;
+        } else if (TripSave.last(TripSave.class) != null) {
+            Timber.i("method=getTripSaved lastTripSaved.id=%d", TripSave.last(TripSave.class).getId());
+            return TripSave.last(TripSave.class);
+        } else {
+            Timber.i("method=getTripSaved tripSave=null");
+            return null;
+        }
     }
 
     /**
@@ -104,7 +119,7 @@ public class UploadService extends IntentService {
         Timber.d("method=callUploadTrip");
         if (!tripSave.getLocations().isEmpty() && tripSave.getLocations().size() > 1) {
             TripWS tripWS = new TripWS();
-            tripWS.setVehicle_type_id(1);
+            tripWS.setVehicle_type_id(PreferencesManager.getInstance(this).getVehicleType());
 
             /*Trip trip = new Trip((float) (tripSave.getMiles()), true,
                     tripSave.getMapboxUrl(), tripSave.getFromAddress(), tripSave.getToAddress(), TripHelper.locationsToString(tripSave.getLocations()),
@@ -121,11 +136,11 @@ public class UploadService extends IntentService {
             trip.setEndedAt(TimeHelper.longToTimeFormat(tripSave.getLocations().get(tripSave.getLocations().size() - 1).getTime()));
             GeneralHelper.setAndroidDataToTrip(this, trip);*/
 
-            RequestManager.getDefault(getApplicationContext()).uploadTrip(tripWS).enqueue(new Callback<TripWS>() {
+            RequestManager.getDefault(getApplicationContext()).uploadTrip(tripWS.getVehicle_type_id()).enqueue(new Callback<TripWS>() {
                 @Override
                 public void onResponse(Call<TripWS> call, Response<TripWS> response) {
                     if (response.isSuccessful()) {
-                        Timber.d("method=uploadTrip.onResponse action='Trip saved in WS'");
+                        Timber.d("method=onResponse action='Trip saved in WS'");
                         //tripSave.deleteLocations();
                         //tripSave.delete();
                         tripSent = response.body();
@@ -163,12 +178,19 @@ public class UploadService extends IntentService {
             recordWS.setTime_registered(dateRegistered);
 
             final int finalI = i;
-            Call<RecordWS> call = RequestManager.getDefault(getApplicationContext()).uploadRecord(recordWS);
-            call.enqueue(new Callback<RecordWS>() {
+            RequestManager.getDefault(getApplicationContext()).uploadRecord(
+                    recordWS.getTravel_id(),
+                    recordWS.getStart_latitude(),
+                    recordWS.getStart_longitude(),
+                    recordWS.getEnd_latitude(),
+                    recordWS.getEnd_longitude(),
+                    recordWS.getSpeed(),
+                    recordWS.getTime_registered()
+            ).enqueue(new Callback<RecordWS>() {
                 @Override
                 public void onResponse(Call<RecordWS> call, Response<RecordWS> response) {
                     if (response.isSuccessful()) {
-                        Timber.d("method=uploadTrip.sendRecords.onResponse action='Trip saved in WS'");
+                        Timber.d("method=sendRecords.onResponse action='Trip saved in WS'");
                         if (finalI == locations.size()-2) {
                             tripSave.deleteLocations();
                             tripSave.delete();

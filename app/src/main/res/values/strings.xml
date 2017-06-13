@@ -24,9 +24,6 @@
     <string name="geofence_transition_notification_text">Click notification to return to app</string>
 
 
-
-
-
     <!-- Strings for tabs -->
     <string name="tab_home">HOME</string>
     <string name="tab_trips">TRIPS</string>
@@ -235,4 +232,15 @@
 
     <!-- Strings related to my work sources -->
     <string name="mws_none">None</string>
+
+    <!-- Main Activity -->
+    <string-array name="vehicles_strings">
+        <item>Auto privado</item>
+        <item>Taxi</item>
+        <item>Combi</item>
+        <item>Bus</item>
+        <item>Metropolitano</item>
+        <item>Bus azul</item>
+        <item>Tren</item>
+    </string-array>
 </resources>

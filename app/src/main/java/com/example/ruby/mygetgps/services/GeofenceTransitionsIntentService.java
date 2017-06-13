@@ -16,6 +16,7 @@
 
 package com.example.ruby.mygetgps.services;
 
+import android.app.ActivityManager;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -28,10 +29,15 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.ruby.mygetgps.services.on_trip.TripTrackingService;
+import com.example.ruby.mygetgps.utils.Constants;
 import com.example.ruby.mygetgps.utils.GeofenceErrorMessages;
 import com.example.ruby.mygetgps.ui.activities.MainActivity;
 import com.example.ruby.mygetgps.R;
 import com.example.ruby.mygetgps.utils.ServiceHelper;
+import com.example.ruby.mygetgps.utils.TripHelper;
+import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -71,39 +77,46 @@ public class GeofenceTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-        if (geofencingEvent.hasError()) {
-            String errorMessage = GeofenceErrorMessages.getErrorString(this,
-                    geofencingEvent.getErrorCode());
-            Log.e(TAG, errorMessage);
-            return;
+        if (!geofencingEvent.hasError()) {
+            // Get the transition type.
+            int geofenceTransition = geofencingEvent.getGeofenceTransition();
+
+            if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
+                    geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+
+                // Get the geofences that were triggered. A single event can trigger multiple geofences.
+                List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+
+                // Get the transition details as a String.
+                String geofenceTransitionDetails = getGeofenceTransitionDetails(
+                        this,
+                        geofenceTransition,
+                        triggeringGeofences
+                );
+
+                // Send notification and log the transition details.
+                sendNotification(geofenceTransitionDetails);
+                Log.i(TAG, geofenceTransitionDetails);
+
+                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT && !isTripTrackingServiceRunning(TripTrackingService.class)){
+                    ServiceHelper.startTripTrackingService(this, null);
+                }
+            } else {
+                // Log the error.
+                Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
+            }
         }
 
-        // Get the transition type.
-        int geofenceTransition = geofencingEvent.getGeofenceTransition();
+        if (ActivityRecognitionResult.hasResult(intent)) {  //MOTION TRACKING
+            ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
+            DetectedActivity detectedActivity = result.getMostProbableActivity();
 
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-                geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-
-            // Get the geofences that were triggered. A single event can trigger multiple geofences.
-            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-
-            // Get the transition details as a String.
-            String geofenceTransitionDetails = getGeofenceTransitionDetails(
-                    this,
-                    geofenceTransition,
-                    triggeringGeofences
-            );
-
-            // Send notification and log the transition details.
-            sendNotification(geofenceTransitionDetails);
-            Log.i(TAG, geofenceTransitionDetails);
-
-            if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-                ServiceHelper.startTripTrackingService(this, null);
+            if (TripHelper.isUserDriving(detectedActivity)) {
+                if (!isTripTrackingServiceRunning(TripTrackingService.class)) {
+                    sendNotification(getApplicationContext().getString(R.string.notification_activity_driving));
+                    ServiceHelper.startTripTrackingService(getApplicationContext(), Constants.DRIVING_MOTION); //startMethod: "AutomotiveMotion"
+                }
             }
-        } else {
-            // Log the error.
-            Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
         }
     }
 
@@ -193,5 +206,21 @@ public class GeofenceTransitionsIntentService extends IntentService {
             default:
                 return getString(R.string.unknown_geofence_transition);
         }
+    }
+
+    /**
+     * Tells if TripTrackingService is already running. To send it the ActivityDetected data
+     * @param serviceClass  Class to be detected is is started
+     * @return              yes is service is running
+     */
+    //TODO: use "TripTrackingService.class" instead of serviceClass
+    private boolean isTripTrackingServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

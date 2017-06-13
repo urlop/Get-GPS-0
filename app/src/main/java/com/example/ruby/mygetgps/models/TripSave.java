@@ -5,6 +5,8 @@ import com.orm.SugarRecord;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Trip Model for data saved in the database.
  */
@@ -247,6 +249,7 @@ public class TripSave extends SugarRecord {
      * @return list of TripSave
      */
     public static List<TripSave> getAllTripsToUpload() {
+        Timber.d("method=getAllTripsToUpload count=%d", TripSave.count(TripSave.class, "finished=?", new String[]{"1"}));
         return TripSave.find(TripSave.class, "finished=?", "1");
     }
 

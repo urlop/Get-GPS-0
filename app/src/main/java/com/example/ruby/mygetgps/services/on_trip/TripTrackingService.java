@@ -222,9 +222,10 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
      * @param tripSave trip in database to be uploaded
      */
     private void uploadValidLocationsService(TripSave tripSave) {
-        Timber.d("method=TripTrackingService.uploadValidLocationsService");
+        Timber.d("method=TripTrackingService.uploadValidLocationsService id=%d", tripSave.getId());
         float tripDistance = tripTrackingListener.getDriveState().getTotalDistance();
         tripSave.setMiles(tripDistance);
+        tripSave.setFinished();
         tripSave.save();
 
         sendNotification("Trip ended", "distance: " + tripDistance, 105);
@@ -273,6 +274,8 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
      * @param tripSave   trip saved in database
      */
     private void saveForTesting(DriveState driveState, TripSave tripSave) {
+        Timber.d("method=TripTrackingService.saveForTesting marker=StoppingTrip action='stopping trip and saving data'");
+
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
 
         StringBuilder sbAll = TestHelper.getAllLocations(driveState);

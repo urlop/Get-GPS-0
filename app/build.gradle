@@ -43,7 +43,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
+
+
+    compile files('Libs/logentries-android.jar')
+
     compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.android.support:cardview-v7:25.1.1'
     compile 'com.android.support:design:25.1.1'
@@ -51,7 +54,6 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.1'
     compile 'com.google.maps.android:android-maps-utils:0.4'
     compile 'com.google.android.gms:play-services-location:8.1.0'
-
     compile 'com.jakewharton.timber:timber:4.1.0'
     compile 'com.squareup.retrofit2:retrofit:2.0.0'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0'
@@ -61,7 +63,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.github.satyan:sugar:1.4'
     compile 'com.jakewharton:butterknife:7.0.1'
-
-    compile files('Libs/logentries-android.jar')
-
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha4'
+    testCompile 'junit:junit:4.12'
 }

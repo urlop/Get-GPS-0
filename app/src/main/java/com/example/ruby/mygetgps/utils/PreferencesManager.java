@@ -13,11 +13,12 @@ public class PreferencesManager {
 
     private static PreferencesManager self;
     private final SharedPreferences mPreferences;
-    private static final String PREFERENCES_NAME = "Everlance";
+    private static final String PREFERENCES_NAME = "GetGPS";
     private static final String AUTOMATIC_TRACKING_SWITCH_STATE = "SwitchState";
     private static final String AUTH_TOKEN = "AuthToken";
     private static final String TRIP_STARTED_STATE = "tripStartedState";
     private static final String AUTO_CLASSIFY_STATE = "AutoClassifyState";
+    private static final String VEHICLE_TYPE = "VehicleType";
 
     /**
      * Sets SharedPreferences' value
@@ -109,5 +110,15 @@ public class PreferencesManager {
 
     public void deleteAllSharedPreferences() {
         mPreferences.edit().clear().commit();
+    }
+
+    public void saveVehicleType(int vehicleType) {
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt(VEHICLE_TYPE, vehicleType);
+        editor.apply();
+    }
+
+    public int getVehicleType() {
+        return mPreferences.getInt(VEHICLE_TYPE, 1);
     }
 }

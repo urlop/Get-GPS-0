@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.ruby.mygetgps.R;
 import com.example.ruby.mygetgps.services.GeofenceTransitionsIntentService;
+import com.example.ruby.mygetgps.utils.ConfigurationConstants;
 import com.example.ruby.mygetgps.utils.Constants;
 import com.example.ruby.mygetgps.utils.GeofenceErrorMessages;
 import com.google.android.gms.common.ConnectionResult;
@@ -18,6 +19,7 @@ import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
@@ -107,6 +109,7 @@ public class DetectTripStartedBuilder implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
+                .addApi(ActivityRecognition.API)
                 .build();
         mGoogleApiClient.connect();
     }
@@ -178,6 +181,12 @@ public class DetectTripStartedBuilder implements
                     // transition is observed.
                     mGeofencePendingIntent
             ).setResultCallback(this); // Result processed in onResult().
+
+            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
+                    mGoogleApiClient,
+                    ConfigurationConstants.DETECTION_INTERVAL_ACTIVITY,
+                    mGeofencePendingIntent);
+
         } catch (SecurityException securityException) {
             // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
             logSecurityException(securityException);

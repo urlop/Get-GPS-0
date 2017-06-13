@@ -17,9 +17,9 @@ public class RebootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent)
     {
         Timber.d("method=onReceive action='Trying to restart services on reboot'");
-        if (PreferencesManager.getInstance(context).getAutomatictTrackingSwitchState()) {
+        /*if (PreferencesManager.getInstance(context).getAutomatictTrackingSwitchState()) {
             ServiceHelper.startStartTripService(context, null);
             ServiceHelper.uploadService(context);
-        }
+        }*/
     }
 }
