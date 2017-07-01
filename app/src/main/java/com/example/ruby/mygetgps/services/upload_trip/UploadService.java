@@ -113,7 +113,7 @@ public class UploadService extends IntentService {
     /**
      * Uploads tripSave to web service.
      *
-     * @param tripSave      to to be uploaded
+     * @param tripSave to to be uploaded
      */
     private void callUploadTrip(final TripSave tripSave) {
         Timber.d("method=callUploadTrip");
@@ -161,18 +161,30 @@ public class UploadService extends IntentService {
         }
     }
 
-    private void sendRecords(final TripSave tripSave){
+    private void sendRecords(final TripSave tripSave) {
         final List<LocationSave> locations = tripSave.getLocations();
-        for (int i=0; i<locations.size()-1; i++) {
+        for (int i = 0; i < locations.size() - 1; i++) {
             LocationSave locationSave = locations.get(i);
-            LocationSave nextLocationSave = locations.get(i+1);
+            LocationSave nextLocationSave = locations.get(i + 1);
             RecordWS recordWS = new RecordWS();
             recordWS.setTravel_id(tripSent.getId());
             recordWS.setStart_latitude((float) locationSave.getLatitude());
             recordWS.setStart_longitude((float) locationSave.getLongitude());
             recordWS.setEnd_latitude((float) nextLocationSave.getLatitude());
             recordWS.setEnd_longitude((float) nextLocationSave.getLongitude());
-            recordWS.setSpeed(locationSave.getSpeed());
+
+            //Set speed
+            double speed;
+            if (locationSave.getSpeed() == 0) {
+                speed = Math.sqrt(
+                        Math.pow(nextLocationSave.getLongitude() - locationSave.getLongitude(), 2)
+                                + Math.pow(nextLocationSave.getLatitude() - locationSave.getLatitude(), 2)
+                ) / (nextLocationSave.getTime() - locationSave.getTime());
+                speed = (double) Math.round(speed * 10000000d) / 10000000d;
+            } else {
+                speed = locationSave.getSpeed();
+            }
+            recordWS.setSpeed((float) speed);
             Date dateRegistered = new Date();
             dateRegistered.setTime(locationSave.getTime());
             recordWS.setTime_registered(dateRegistered);
@@ -191,7 +203,7 @@ public class UploadService extends IntentService {
                 public void onResponse(Call<RecordWS> call, Response<RecordWS> response) {
                     if (response.isSuccessful()) {
                         Timber.d("method=sendRecords.onResponse action='Trip saved in WS'");
-                        if (finalI == locations.size()-2) {
+                        if (finalI == locations.size() - 2) {
                             tripSave.deleteLocations();
                             tripSave.delete();
                         }

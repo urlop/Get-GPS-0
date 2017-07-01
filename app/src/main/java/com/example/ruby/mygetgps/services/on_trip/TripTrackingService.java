@@ -23,6 +23,7 @@ import com.example.ruby.mygetgps.models.TripSave;
 import com.example.ruby.mygetgps.ui.activities.MainActivity;
 import com.example.ruby.mygetgps.utils.ConfigurationConstants;
 import com.example.ruby.mygetgps.utils.Constants;
+import com.example.ruby.mygetgps.utils.GeneralHelper;
 import com.example.ruby.mygetgps.utils.LoggingHelper;
 import com.example.ruby.mygetgps.utils.PermissionUtil;
 import com.example.ruby.mygetgps.utils.PreferencesManager;
@@ -138,7 +139,7 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         startLocationUpdates();
         LocationManager manager = (LocationManager) getSystemService(getApplication().LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            sendNotification(getString(R.string.notification_trip_started_no_gps_title), getString(R.string.notification_trip_started_no_gps_message), TURN_ON_GPS_NOTIFICATION_ID);
+            GeneralHelper.sendNotification(this, getString(R.string.notification_trip_started_no_gps_title), getString(R.string.notification_trip_started_no_gps_message), TURN_ON_GPS_NOTIFICATION_ID);
         }
 
     }
@@ -228,18 +229,18 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         tripSave.setFinished();
         tripSave.save();
 
-        sendNotification("Trip ended", "distance: " + tripDistance, 105);
-
-        //if (TripHelper.validateFinalTrip(tripSave)) {
+        if (TripHelper.validateFinalTrip(tripSave)) {
             Timber.d("method=uploadValidLocationsService marker=UploadingValidTrip trip.valid=true trip.distance=%f", tripDistance);
+            GeneralHelper.sendNotification(this, getString(R.string.trip_ended), getString(R.string.final_distance, tripDistance), 0);
             ServiceHelper.uploadTripService(this, tripSave);
-        /*} else {
+        } else {
             Timber.d("method=uploadValidLocationsService marker=TripTooShortForUpload trip.valid=false trip.distance=%f", tripDistance);
             tripSave.deleteLocations();
             tripSave.delete();
             //TripTabFragment.getInstance().setProgressBarVisibility(false);
+            GeneralHelper.sendNotification(this, getString(R.string.trip_ended), getString(R.string.final_distance_short, tripDistance), 0);
             Toast.makeText(getApplicationContext(), R.string.trip_error_invalid, Toast.LENGTH_LONG).show();
-        }*/
+        }
 
     }
 
@@ -309,14 +310,7 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         }
     }
 
-    /**
-     * Sends a notification telling the user to turn on his/her GPS if it is off
-     *
-     * @param notificationTitle title of notification
-     * @param notificationText  message in the notification
-     * @param id                identifier of the notification
-     */
-    private void sendNotification(String notificationTitle, String notificationText, int id) {
+    /*private void sendNotification(String notificationTitle, String notificationText, int id) {
         PowerManager pm = (PowerManager) getApplicationContext()
                 .getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock wakeLock = pm.newWakeLock(
@@ -340,11 +334,11 @@ public class TripTrackingService extends Service implements GoogleApiClient.Conn
         notificationManager.notify(id, notificationBuilder.build());
 
         wakeLock.release();
-    }
+    }*/
 
     @Override
     public boolean stopService(Intent name) {
-        sendNotification("TripTrackingService", "Stopped", 110);
+        GeneralHelper.sendNotification(this, "TripTrackingService", "Stopped", 110);
         return super.stopService(name);
     }
 }

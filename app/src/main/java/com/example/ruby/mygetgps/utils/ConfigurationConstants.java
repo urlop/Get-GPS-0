@@ -39,7 +39,7 @@ public final class ConfigurationConstants {
     public final static int LIMIT_DISTANCE_BETWEEN_N_LOCATIONS = 10;
 
     //Constants for Validate Trip
-    public static final double MINIMUM_MILES = 0.5; //805 meters
+    public static final double MINIMUM_MILES = 0.125; //201.168 meters
     public static final double MINIMUM_LOCATION_POINTS = 2;
 
 }

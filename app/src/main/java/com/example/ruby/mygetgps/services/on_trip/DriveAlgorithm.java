@@ -49,10 +49,10 @@ class DriveAlgorithm {
         if (vLocation) {
             driveState.addToTotalDistance(driveState.getPreviousLocation().distanceTo(driveState.getCurrentLocation()));
             saveTripLocation(currentLocation, trip);
-            Toast.makeText(GetGpsApplication.getInstance(), "Saved: " +
+            /*Toast.makeText(GetGpsApplication.getInstance(), "Saved: " +
                     "lat: " + driveState.getPreviousLocation().getLatitude() +
                     "lon: " + driveState.getPreviousLocation().getLongitude(),
-                    Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT).show();*/
         }
     }
 

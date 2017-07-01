@@ -215,7 +215,7 @@ public class DetectTripStartedBuilder implements
             editor.putBoolean(Constants.GEOFENCES_ADDED_KEY, mGeofencesAdded);
             editor.apply();
 
-            Toast.makeText(mContext, "Geofence Added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, mContext.getString(R.string.geofence_registered), Toast.LENGTH_SHORT).show();
         } else {
             // Get the status code for the error and log it using a user-friendly message.
             String errorMessage = GeofenceErrorMessages.getErrorString(mContext,
@@ -253,7 +253,7 @@ public class DetectTripStartedBuilder implements
         }
 
         mGeofenceList.add(new Geofence.Builder()
-                .setRequestId("ME")
+                .setRequestId("ORIGEN")
                 .setCircularRegion(
                         mLastKnowLocation.getLatitude(),
                         mLastKnowLocation.getLongitude(),

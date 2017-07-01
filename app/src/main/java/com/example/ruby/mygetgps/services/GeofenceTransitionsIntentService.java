@@ -23,7 +23,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
@@ -31,9 +30,9 @@ import android.util.Log;
 
 import com.example.ruby.mygetgps.services.on_trip.TripTrackingService;
 import com.example.ruby.mygetgps.utils.Constants;
-import com.example.ruby.mygetgps.utils.GeofenceErrorMessages;
 import com.example.ruby.mygetgps.ui.activities.MainActivity;
 import com.example.ruby.mygetgps.R;
+import com.example.ruby.mygetgps.utils.GeneralHelper;
 import com.example.ruby.mygetgps.utils.ServiceHelper;
 import com.example.ruby.mygetgps.utils.TripHelper;
 import com.google.android.gms.location.ActivityRecognitionResult;
@@ -95,12 +94,20 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 );
 
                 // Send notification and log the transition details.
-                sendNotification(geofenceTransitionDetails);
+                /*GeneralHelper.sendNotification(getApplicationContext(),
+                        geofenceTransitionDetails,
+                        getApplicationContext().getString(R.string.geofence_transition_notification_text),
+                        0);*/
                 Log.i(TAG, geofenceTransitionDetails);
 
-                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT && !isTripTrackingServiceRunning(TripTrackingService.class)){
+                //TODO Check if needs geofence.
+                /*if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT && !ServiceHelper.isServiceRunning(this, TripTrackingService.class)){
+                    GeneralHelper.sendNotification(getApplicationContext(),
+                            getApplicationContext().getString(R.string.notification_geofence_exited),
+                            getApplicationContext().getString(R.string.geofence_transition_notification_text),
+                            0);
                     ServiceHelper.startTripTrackingService(this, null);
-                }
+                }*/
             } else {
                 // Log the error.
                 Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
@@ -112,8 +119,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
             DetectedActivity detectedActivity = result.getMostProbableActivity();
 
             if (TripHelper.isUserDriving(detectedActivity)) {
-                if (!isTripTrackingServiceRunning(TripTrackingService.class)) {
-                    sendNotification(getApplicationContext().getString(R.string.notification_activity_driving));
+                if (!ServiceHelper.isServiceRunning(this, TripTrackingService.class)) {
+                    GeneralHelper.sendNotification(getApplicationContext(),
+                            getApplicationContext().getString(R.string.notification_activity_driving),
+                            getApplicationContext().getString(R.string.geofence_transition_notification_text),
+                            0);
                     ServiceHelper.startTripTrackingService(getApplicationContext(), Constants.DRIVING_MOTION); //startMethod: "AutomotiveMotion"
                 }
             }
@@ -142,53 +152,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
         String triggeringGeofencesIdsString = TextUtils.join(", ",  triggeringGeofencesIdsList);
 
-        return geofenceTransitionString + ": " + triggeringGeofencesIdsString;
-    }
-
-    /**
-     * Posts a notification in the notification bar when a transition is detected.
-     * If the user clicks the notification, control goes to the MainActivity.
-     */
-    private void sendNotification(String notificationDetails) {
-        // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
-
-        // Construct a task stack.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Add the main Activity to the task stack as the parent.
-        stackBuilder.addParentStack(MainActivity.class);
-
-        // Push the content Intent onto the stack.
-        stackBuilder.addNextIntent(notificationIntent);
-
-        // Get a PendingIntent containing the entire back stack.
-        PendingIntent notificationPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Get a notification builder that's compatible with platform versions >= 4
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        // Define the notification settings.
-        builder.setSmallIcon(R.drawable.ic_launcher)
-                // In a real app, you may want to use a library like Volley
-                // to decode the Bitmap.
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.ic_stat_pointer_1915456_960_720))
-                .setColor(Color.RED)
-                .setContentTitle(notificationDetails)
-                .setContentText(getString(R.string.geofence_transition_notification_text))
-                .setContentIntent(notificationPendingIntent);
-
-        // Dismiss notification once the user touches it.
-        builder.setAutoCancel(true);
-
-        // Get an instance of the Notification manager
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        return geofenceTransitionString; // + ": " + triggeringGeofencesIdsString;
     }
 
     /**
@@ -208,19 +172,5 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
     }
 
-    /**
-     * Tells if TripTrackingService is already running. To send it the ActivityDetected data
-     * @param serviceClass  Class to be detected is is started
-     * @return              yes is service is running
-     */
-    //TODO: use "TripTrackingService.class" instead of serviceClass
-    private boolean isTripTrackingServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 }

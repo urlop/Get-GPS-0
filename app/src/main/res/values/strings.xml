@@ -3,7 +3,7 @@
     <string name="geofences_removed">Geofences removed</string>
 
     <!-- Error strings -->
-    <string name="not_connected">Sin conexión. Intenta de nuevo</string>
+    <string name="not_connected">Sin conexión. Intenta de nuevo.</string>
     <string name="geofence_not_available">Servicio no disponible por ahora</string>
     <string name="geofence_too_many_geofences">Demasiadas ubicaciones origen registradas</string>
     <string name="geofence_too_many_pending_intents">
@@ -17,8 +17,8 @@
     </string>
 
     <!-- Transition type strings -->
-    <string name="geofence_transition_entered">Entró</string>
-    <string name="geofence_transition_exited">Salió</string>
+    <string name="geofence_transition_entered">Ubicación origen registrada</string>
+    <string name="geofence_transition_exited">Ha empezado tu viaje</string>
     <string name="unknown_geofence_transition">Transición desconocida</string>
 
     <string name="geofence_transition_notification_text">Has click para volver al app</string>
@@ -29,8 +29,8 @@
     <string name="tab_trips">TRIPS</string>
 
     <!-- Strings for Notifications StarTripService  -->
-    <string name="notification_geofence_exited">Saliste de su ubicación origen</string>
-    <string name="notification_activity_driving">Estás en un vehículo</string>
+    <string name="notification_geofence_exited">Saliste de su ubicación origen. Tu viaje ha empezado.</string>
+    <string name="notification_activity_driving">Tu viaje ha empezado.</string> <!-- Estás en un vehículo. Tu viaje ha empezado. -->
 
     <!-- Strings for Notifications StarTripService  -->
     <string name="notification_trip_started_no_gps_title">Viaje iniciado</string>
@@ -243,4 +243,9 @@
         <item>Bus azul</item>
         <item>Tren</item>
     </string-array>
+
+    <string name="trip_ended">Viaje terminado</string>
+    <string name="final_distance">Distancia: %1$f.</string>
+    <string name="geofence_registered">Ubicacón Registrada</string>
+    <string name="final_distance_short">Demasiado corto. Distancia: %1$f.</string>
 </resources>

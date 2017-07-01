@@ -1,5 +1,6 @@
 package com.example.ruby.mygetgps.utils;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -124,7 +125,9 @@ public class ServiceHelper {
         } else {
             Timber.w(message + "lastLocation=null");
         }
-        new DetectTripStartedBuilder(context, location);
+        if (!isServiceRunning(context, TripTrackingService.class)) {
+            new DetectTripStartedBuilder(context, location);
+        }
     }
 
     /**
@@ -158,5 +161,20 @@ public class ServiceHelper {
         /*Intent in = new Intent(UploadService.ACTION);
         in.putExtra(Constants.TRIP_OBJECT_EXTRA, trip);
         LocalBroadcastManager.getInstance(context).sendBroadcast(in);*/
+    }
+
+    /**
+     * Tells if service is already running.
+     * @param serviceClass  Class to be detected if has started
+     * @return              yes if service is running
+     */
+    public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
