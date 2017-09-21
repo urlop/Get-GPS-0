@@ -2,6 +2,7 @@ package com.example.ruby.mygetgps.services.on_trip;
 
 
 import android.location.Location;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.ruby.mygetgps.GetGpsApplication;
@@ -47,12 +48,37 @@ class DriveAlgorithm {
                 vLocation, vAccuracy, vSpeed, vDeltaDistance);
 
         if (vLocation) {
-            driveState.addToTotalDistance(driveState.getPreviousLocation().distanceTo(driveState.getCurrentLocation()));
-            saveTripLocation(currentLocation, trip);
+            //Show speed
+            double speed = currentLocation.getLocation().getSpeed();
+            if (currentLocation.getLocation().getSpeed() == 0 && trip.getLocations().size() > 1) {
+                double distance = TripHelper.distance(currentLocation.getLocation().getLatitude(),
+                        currentLocation.getLocation().getLongitude(),
+                        previousLocation.getLatitude(),
+                        previousLocation.getLongitude()) * 1000; //m
+                Log.e("speed - distance", String.valueOf(distance));
+                Log.e("speed - time curr", String.valueOf(currentLocation.getLocation().getTime()));
+                Log.e("speed - time prev", String.valueOf(previousLocation.getTime()));
+                long time = (currentLocation.getLocation().getTime() - previousLocation.getTime()) / 1000; /// 3600 * 3600; //s
+                Log.e("speed - time", String.valueOf(time));
+                speed = distance / time; //in m/s
+                Log.e("speed - speed", String.valueOf(speed));
+                if (speed < 0) {
+                    speed = 0;
+                }
+            }
+
+            Toast.makeText(GetGpsApplication.getInstance().getApplicationContext(),
+                    "Speed : " + String.valueOf((float)speed),
+                    Toast.LENGTH_LONG).show();
             /*Toast.makeText(GetGpsApplication.getInstance(), "Saved: " +
                     "lat: " + driveState.getPreviousLocation().getLatitude() +
                     "lon: " + driveState.getPreviousLocation().getLongitude(),
                     Toast.LENGTH_SHORT).show();*/
+
+            //Save location
+            currentLocation.getLocation().setSpeed((float) speed);
+            driveState.addToTotalDistance(driveState.getPreviousLocation().distanceTo(driveState.getCurrentLocation()));
+            saveTripLocation(currentLocation, trip);
         }
     }
 
@@ -63,6 +89,7 @@ class DriveAlgorithm {
      * @param trip            current trip
      */
     private static void saveTripLocation(UserLocation currentLocation, TripSave trip) {
+        Log.e("speed saved", String.valueOf(currentLocation.getLocation().getSpeed()));
         LocationSave locationSave = new LocationSave(currentLocation.getLocation().getLatitude(),
                 currentLocation.getLocation().getLongitude(),
                 currentLocation.getLocation().getSpeed(),

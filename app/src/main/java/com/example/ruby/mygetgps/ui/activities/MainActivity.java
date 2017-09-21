@@ -22,6 +22,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements
             //**************************
             builder.setAlwaysShow(true); //this is the key ingredient
             //**************************
-
             PendingResult<LocationSettingsResult> result =
                     LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
             result.setResultCallback(new ResultCallback<LocationSettingsResult>() {

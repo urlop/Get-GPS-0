@@ -36,7 +36,7 @@ public final class ConfigurationConstants {
     public final static int LIMIT_ACCURACY = 80;
     public final static float MINIMUM_SPEED = 0.0f;
     public final static int MINIMUM_DISTANCE_DELTA = 0;
-    public final static int LIMIT_DISTANCE_BETWEEN_N_LOCATIONS = 10;
+    public final static int LIMIT_DISTANCE_BETWEEN_N_LOCATIONS = 50;
 
     //Constants for Validate Trip
     public static final double MINIMUM_MILES = 0.125; //201.168 meters

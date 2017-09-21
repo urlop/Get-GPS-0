@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Google Inc. All Rights Reserved.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,7 +75,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+        /*GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (!geofencingEvent.hasError()) {
             // Get the transition type.
             int geofenceTransition = geofencingEvent.getGeofenceTransition();
@@ -94,25 +94,25 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 );
 
                 // Send notification and log the transition details.
-                /*GeneralHelper.sendNotification(getApplicationContext(),
+                GeneralHelper.sendNotification(getApplicationContext(),
                         geofenceTransitionDetails,
                         getApplicationContext().getString(R.string.geofence_transition_notification_text),
-                        0);*/
+                        0);
                 Log.i(TAG, geofenceTransitionDetails);
 
                 //TODO Check if needs geofence.
-                /*if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT && !ServiceHelper.isServiceRunning(this, TripTrackingService.class)){
+                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT && !ServiceHelper.isServiceRunning(this, TripTrackingService.class)) {
                     GeneralHelper.sendNotification(getApplicationContext(),
                             getApplicationContext().getString(R.string.notification_geofence_exited),
                             getApplicationContext().getString(R.string.geofence_transition_notification_text),
                             0);
-                    ServiceHelper.startTripTrackingService(this, null);
-                }*/
+                    ServiceHelper.startTripTrackingService(getApplicationContext(), null);
+                }
             } else {
                 // Log the error.
                 Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
             }
-        }
+        }*/
 
         if (ActivityRecognitionResult.hasResult(intent)) {  //MOTION TRACKING
             ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
@@ -136,7 +136,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * @param context               The app context.
      * @param geofenceTransition    The ID of the geofence transition.
      * @param triggeringGeofences   The geofence(s) triggered.
-     * @return                      The transition details formatted as String.
+     * @return The transition details formatted as String.
      */
     private String getGeofenceTransitionDetails(
             Context context,
@@ -150,7 +150,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         for (Geofence geofence : triggeringGeofences) {
             triggeringGeofencesIdsList.add(geofence.getRequestId());
         }
-        String triggeringGeofencesIdsString = TextUtils.join(", ",  triggeringGeofencesIdsList);
+        String triggeringGeofencesIdsString = TextUtils.join(", ", triggeringGeofencesIdsList);
 
         return geofenceTransitionString; // + ": " + triggeringGeofencesIdsString;
     }
@@ -159,7 +159,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * Maps geofence transition types to their human-readable equivalents.
      *
      * @param transitionType    A transition type constant defined in Geofence
-     * @return                  A String indicating the type of transition
+     * @return A String indicating the type of transition
      */
     private String getTransitionString(int transitionType) {
         switch (transitionType) {

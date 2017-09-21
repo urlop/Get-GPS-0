@@ -141,8 +141,8 @@ public class UploadService extends IntentService {
                 public void onResponse(Call<TripWS> call, Response<TripWS> response) {
                     if (response.isSuccessful()) {
                         Timber.d("method=onResponse action='Trip saved in WS'");
-                        //tripSave.deleteLocations();
-                        //tripSave.delete();
+                        tripSave.deleteLocations();
+                        tripSave.delete();
                         tripSent = response.body();
                         //ServiceHelper.broadCastTripStopped(getApplicationContext(), trip);
                         //TripTabFragment.getInstance().setProgressBarVisibility(false);
@@ -175,15 +175,15 @@ public class UploadService extends IntentService {
 
             //Set speed
             double speed;
-            if (locationSave.getSpeed() == 0) {
+            /*if (locationSave.getSpeed() == 0) {
                 speed = Math.sqrt(
                         Math.pow(nextLocationSave.getLongitude() - locationSave.getLongitude(), 2)
                                 + Math.pow(nextLocationSave.getLatitude() - locationSave.getLatitude(), 2)
                 ) / (nextLocationSave.getTime() - locationSave.getTime());
                 speed = (double) Math.round(speed * 10000000d) / 10000000d;
-            } else {
+            } else {*/
                 speed = locationSave.getSpeed();
-            }
+            //}
             recordWS.setSpeed((float) speed);
             Date dateRegistered = new Date();
             dateRegistered.setTime(locationSave.getTime());
