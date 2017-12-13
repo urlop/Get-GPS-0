@@ -3,6 +3,8 @@ package com.example.ruby.mygetgps.services.on_trip;
 
 import android.location.Location;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ruby.mygetgps.GetGpsApplication;
@@ -12,6 +14,7 @@ import com.example.ruby.mygetgps.models.TripSave;
 import com.example.ruby.mygetgps.models.UserLocation;
 import com.example.ruby.mygetgps.utils.ConfigurationConstants;
 import com.example.ruby.mygetgps.utils.Constants;
+import com.example.ruby.mygetgps.utils.GeneralHelper;
 import com.example.ruby.mygetgps.utils.TripHelper;
 
 import java.util.ArrayList;
@@ -49,8 +52,8 @@ class DriveAlgorithm {
 
         if (vLocation) {
             //Show speed
-            double speed = currentLocation.getLocation().getSpeed();
-            if (currentLocation.getLocation().getSpeed() == 0 && trip.getLocations().size() > 1) {
+            double speed = 0.001;// = currentLocation.getLocation().getSpeed();
+            if (trip.getLocations().size() > 1) { //(currentLocation.getLocation().getSpeed() == 0 && trip.getLocations().size() > 1)
                 double distance = TripHelper.distance(currentLocation.getLocation().getLatitude(),
                         currentLocation.getLocation().getLongitude(),
                         previousLocation.getLatitude(),
@@ -62,14 +65,13 @@ class DriveAlgorithm {
                 Log.e("speed - time", String.valueOf(time));
                 speed = distance / time; //in m/s
                 Log.e("speed - speed", String.valueOf(speed));
-                if (speed < 0) {
-                    speed = 0;
+                if (speed < 0 || speed == Double.POSITIVE_INFINITY || speed == Double.NEGATIVE_INFINITY) {
+                    speed = 0.001;
                 }
             }
 
-            Toast.makeText(GetGpsApplication.getInstance().getApplicationContext(),
-                    "Speed : " + String.valueOf((float)speed),
-                    Toast.LENGTH_LONG).show();
+            GeneralHelper.showToast("Speed : " + String.valueOf((float)speed));
+
             /*Toast.makeText(GetGpsApplication.getInstance(), "Saved: " +
                     "lat: " + driveState.getPreviousLocation().getLatitude() +
                     "lon: " + driveState.getPreviousLocation().getLongitude(),

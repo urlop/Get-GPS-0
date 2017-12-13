@@ -141,8 +141,6 @@ public class UploadService extends IntentService {
                 public void onResponse(Call<TripWS> call, Response<TripWS> response) {
                     if (response.isSuccessful()) {
                         Timber.d("method=onResponse action='Trip saved in WS'");
-                        tripSave.deleteLocations();
-                        tripSave.delete();
                         tripSent = response.body();
                         //ServiceHelper.broadCastTripStopped(getApplicationContext(), trip);
                         //TripTabFragment.getInstance().setProgressBarVisibility(false);

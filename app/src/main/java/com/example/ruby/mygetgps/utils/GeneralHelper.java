@@ -12,7 +12,11 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.ruby.mygetgps.GetGpsApplication;
 import com.example.ruby.mygetgps.R;
 import com.example.ruby.mygetgps.models.Trip;
 import com.example.ruby.mygetgps.models.User;
@@ -26,10 +30,11 @@ import java.util.Locale;
 public class GeneralHelper {
 
     private static final DecimalFormat oneDigit = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.US));//format to 1 decimal place
+    private static Toast toast;
 
     public static void addingMilesRecentlyPostedTrip(Context context, User user, Trip trip) {
         Resources resources = context.getResources();
-        if (user!=null && trip!=null) {
+        if (user != null && trip != null) {
             if (resources.getString(R.string.str_work).equalsIgnoreCase(trip.getPurpose())) {
                 float workMiles = Float.parseFloat(user.getTotalBusinessMiles()) + trip.getMiles();
                 user.setTotalBusinessMiles(String.valueOf(oneDigit.format(workMiles)));
@@ -180,5 +185,18 @@ public class GeneralHelper {
 
         // Issue the notification
         mNotificationManager.notify(id, builder.build());
+    }
+
+    public static void showToast(String text) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(GetGpsApplication.getInstance().getApplicationContext(),
+                text,
+                Toast.LENGTH_LONG);
+        ViewGroup group = (ViewGroup) toast.getView();
+        TextView messageTextView = (TextView) group.getChildAt(0);
+        messageTextView.setTextSize(30);
+        toast.show();
     }
 }
