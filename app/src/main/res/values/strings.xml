@@ -246,6 +246,6 @@
 
     <string name="trip_ended">Viaje terminado</string>
     <string name="final_distance">Distancia: %1$f.</string>
-    <string name="geofence_registered">Ubicacón Registrada</string>
+    <string name="geofence_registered">Ubicación Registrada</string>
     <string name="final_distance_short">Demasiado corto. Distancia: %1$f.</string>
 </resources>

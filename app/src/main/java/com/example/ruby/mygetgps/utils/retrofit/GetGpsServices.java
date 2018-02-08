@@ -1,14 +1,17 @@
 package com.example.ruby.mygetgps.utils.retrofit;
 
 
+import com.example.ruby.mygetgps.models.AuthTokenWS;
 import com.example.ruby.mygetgps.models.LocationSave;
 import com.example.ruby.mygetgps.models.RecordWS;
 import com.example.ruby.mygetgps.models.SignUpUser;
+import com.example.ruby.mygetgps.models.TravelerWS;
 import com.example.ruby.mygetgps.models.Trip;
 import com.example.ruby.mygetgps.models.TripWS;
 import com.example.ruby.mygetgps.models.User;
 import com.example.ruby.mygetgps.models.network.RecordBody;
 import com.example.ruby.mygetgps.models.network.TripBody;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,5 +48,20 @@ public interface GetGpsServices {
                                 @Field("record[end_longitude]") float end_longitude,
                                 @Field("record[speed]") float speed,
                                 @Field("record[time_registered]") Date time_registered);
+
+    @FormUrlEncoded
+    @POST(Urls.TRAVELERS)
+    Call<TravelerWS> uploadRegistration(@Field("traveler[first_name]") String firstName,
+                                        @Field("traveler[last_name]") String lastName,
+                                        @Field("traveler[email]") String email,
+                                        @Field("traveler[password]") String password,
+                                        @Field("traveler[password_confirmation]") String password_confirmation,
+                                        @Field("traveler[vehicle_type_id]") int vehicleTypeId);
+
+    @FormUrlEncoded
+    @POST(Urls.LOGIN)
+    Call<AuthTokenWS> login(@Field("user_login[email]") String email,
+                            @Field("user_login[password]") String password);
+
 
 }

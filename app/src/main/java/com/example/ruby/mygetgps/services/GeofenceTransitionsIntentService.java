@@ -76,7 +76,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-        if (!geofencingEvent.hasError()) {
+        // TODO UNDO
+        /*if (!geofencingEvent.hasError()) {
             // Get the transition type.
             int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
@@ -112,7 +113,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 // Log the error.
                 Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
             }
-        }
+        }*/
 
         if (ActivityRecognitionResult.hasResult(intent)) {  //MOTION TRACKING
             ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);

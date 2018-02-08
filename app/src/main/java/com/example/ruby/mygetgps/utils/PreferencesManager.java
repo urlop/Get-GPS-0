@@ -19,6 +19,7 @@ public class PreferencesManager {
     private static final String TRIP_STARTED_STATE = "tripStartedState";
     private static final String AUTO_CLASSIFY_STATE = "AutoClassifyState";
     private static final String VEHICLE_TYPE = "VehicleType";
+    private static final String TOKEN = "Token";
 
     /**
      * Sets SharedPreferences' value
@@ -121,4 +122,5 @@ public class PreferencesManager {
     public int getVehicleType() {
         return mPreferences.getInt(VEHICLE_TYPE, 1);
     }
+
 }

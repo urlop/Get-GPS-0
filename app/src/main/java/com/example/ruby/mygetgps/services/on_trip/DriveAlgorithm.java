@@ -52,7 +52,7 @@ class DriveAlgorithm {
 
         if (vLocation) {
             //Show speed
-            double speed = 0.001;// = currentLocation.getLocation().getSpeed();
+            double speed = -1;// = currentLocation.getLocation().getSpeed();
             if (trip.getLocations().size() > 1) { //(currentLocation.getLocation().getSpeed() == 0 && trip.getLocations().size() > 1)
                 double distance = TripHelper.distance(currentLocation.getLocation().getLatitude(),
                         currentLocation.getLocation().getLongitude(),
@@ -66,21 +66,24 @@ class DriveAlgorithm {
                 speed = distance / time; //in m/s
                 Log.e("speed - speed", String.valueOf(speed));
                 if (speed < 0 || speed == Double.POSITIVE_INFINITY || speed == Double.NEGATIVE_INFINITY) {
-                    speed = 0.001;
+                    speed = -1;
                 }
             }
 
-            GeneralHelper.showToast("Speed : " + String.valueOf((float)speed));
+            if (speed > -1) {
+                // TODO UNDO
+                //GeneralHelper.showToast("Speed : " + String.valueOf((float)speed));
 
             /*Toast.makeText(GetGpsApplication.getInstance(), "Saved: " +
                     "lat: " + driveState.getPreviousLocation().getLatitude() +
                     "lon: " + driveState.getPreviousLocation().getLongitude(),
                     Toast.LENGTH_SHORT).show();*/
 
-            //Save location
-            currentLocation.getLocation().setSpeed((float) speed);
-            driveState.addToTotalDistance(driveState.getPreviousLocation().distanceTo(driveState.getCurrentLocation()));
-            saveTripLocation(currentLocation, trip);
+                //Save location
+                currentLocation.getLocation().setSpeed((float) speed);
+                driveState.addToTotalDistance(driveState.getPreviousLocation().distanceTo(driveState.getCurrentLocation()));
+                saveTripLocation(currentLocation, trip);
+            }
         }
     }
 
